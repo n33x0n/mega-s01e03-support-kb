@@ -10,7 +10,8 @@
 
   const groups = $derived(splitTicket(reports as Report[], ticket, tenantOf, notes.oneDayMove));
   const merged = $derived(uniqueById(reports as Report[]).filter((r) => r.mergedInto === ticket).length);
-  const issue = (problem: string): number | undefined => (filed.tickets as Record<string, number>)[problem];
+  type Filed = { number: number; state: 'open' | 'closed'; reason: string };
+  const tickets = filed.tickets as Record<string, Filed | undefined>;
 </script>
 
 <p class="sum">
@@ -21,10 +22,11 @@
 
 <table>
   <thead>
-    <tr><th>problem</th><th>reports</th><th>filed as</th><th>tagged as</th><th>tenants</th><th>seen</th><th>ticket</th></tr>
+    <tr><th>problem</th><th>reports</th><th>filed as</th><th>tagged as</th><th>tenants</th><th>seen</th><th>ticket</th><th>state</th></tr>
   </thead>
   <tbody>
     {#each groups as g (g.problem)}
+      {@const t = tickets[g.problem]}
       <tr>
         <td><code>{g.problem}</code></td>
         <td>{g.reports.length}</td>
@@ -32,13 +34,12 @@
         <td class="tags">{counts(g.taggedAs)}</td>
         <td>{g.tenants.length}</td>
         <td>{g.firstSeen} → {g.lastSeen}</td>
-        <td>
-          {#if issue(g.problem)}
-            <a href="https://github.com/{filed.repo}/issues/{issue(g.problem)}">#{issue(g.problem)}</a>
-          {:else}
-            <span class="none">no ticket yet</span>
-          {/if}
-        </td>
+        {#if t}
+          <td><a href="https://github.com/{filed.repo}/issues/{t.number}">#{t.number}</a></td>
+          <td class:open={t.state === 'open'}>{t.state} · {t.reason}</td>
+        {:else}
+          <td colspan="2"><span class="none">no ticket yet</span></td>
+        {/if}
       </tr>
     {/each}
   </tbody>
@@ -49,6 +50,6 @@
 <style>
   .sum { font-size: 1.1rem; }
   .tags { color: var(--muted); font-size: 0.85em; }
-  .none { color: var(--warn); font-weight: 600; }
+  .none, .open { color: var(--warn); font-weight: 600; }
   .note { color: var(--muted); font-size: 0.85em; }
 </style>
