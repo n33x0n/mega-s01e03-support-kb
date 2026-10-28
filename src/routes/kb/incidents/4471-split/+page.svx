@@ -4,7 +4,7 @@ title: '#4471 · split by problem'
 owner: n33x0n
 status: open
 reviewed: 2026-10-28
-signature: n33x0n
+signature: v1.eyJzdWIiOiI1MTQiLCJhdWQiOiJjaGFsbGVuZ2U6d2hhdC1pdC1zaG93cyIsImlhdCI6MTc5MzE3MDQ2NywiZXhwIjoxNzkzMjU2ODY3fQ.BF3z6FwYR9w1GLEurb3JiS872uXaVZw_jwRN6gGLCwk
 ---
 
 <script>
