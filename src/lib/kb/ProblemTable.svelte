@@ -2,19 +2,19 @@
   import reports from '#lib/data/reports-4471.json';
   import notes from '#lib/data/desk-notes.json';
   import filed from '#lib/data/tickets-4471.json';
-  import type { Report } from '#lib/kb/causes';
+  import { uniqueById, type Report } from '#lib/kb/causes';
   import { tenantOf } from '#lib/kb/locales';
   import { counts, splitTicket } from '#lib/kb/problems';
 
   let { ticket }: { ticket: number } = $props();
 
   const groups = $derived(splitTicket(reports as Report[], ticket, tenantOf, notes.oneDayMove));
-  const total = $derived(groups.reduce((n, g) => n + g.reports.length, 0));
+  const merged = $derived(uniqueById(reports as Report[]).filter((r) => r.mergedInto === ticket).length);
   const issue = (problem: string): number | undefined => (filed.tickets as Record<string, number>)[problem];
 </script>
 
 <p class="sum">
-  <strong>{total}</strong> reports merged into #{ticket} ·
+  <strong>{merged}</strong> reports merged into #{ticket} ·
   <strong>{groups.length}</strong>
   {groups.length === 1 ? 'problem' : 'problems'}
 </p>
@@ -44,7 +44,7 @@
   </tbody>
 </table>
 
-<p class="note">Tickets live in <a href="https://github.com/{filed.repo}/issues">{filed.repo}</a>. Filed as: where the tenant rule puts a report. Tagged as: what intake guessed from the browser.</p>
+<p class="note">Counted the way the desk counts: each report under the cause the tenant rule files it as. The <code>one-day</code> reports stay counted under <code>parser</code> too. Filed as: where the tenant rule puts a report. Tagged as: what intake guessed from the browser. Tickets live in <a href="https://github.com/{filed.repo}/issues">{filed.repo}</a>.</p>
 
 <style>
   .sum { font-size: 1.1rem; }

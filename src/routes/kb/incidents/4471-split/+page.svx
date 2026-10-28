@@ -31,6 +31,7 @@ their own fixes ship: those reports keep coming after the parser is right.
 Every tenant on file writes the day first. The shared parser reads every date month first, so
 "7 April" comes out as 4 July. This is the bug the #4471 page describes, and the fix queued
 there. It covers reports from the app, from email and from the booking-v2 form, at every tenant.
+The desk counts the `one-day` reports here too, where the tenant rule files them.
 
 ## hint: booking-v3 tells people to type the month first
 
@@ -44,10 +45,11 @@ fix is in the form: print the tenant's own order.
 ## one-day: the date moves by one day
 
 A flipped day and month moves a date by weeks or months, never by a day. The desk read these
-reports as a one-day move (`desk-notes.json`). The tenant rule files them under `parser`, but
-the reports describe something else: the same meeting on two days in two cities, a date shown
-as the day before, an invite older than its booking, one month that is always a day off. The
-cause is not known yet. Time zones and the day boundary are the first thing to check, then June.
+reports as a one-day move (`desk-notes.json`). The tenant rule files them under `parser`, and the
+desk counts them there, but they describe something else: the same meeting on two days in two
+cities, a date shown as the day before, an invite older than its booking, one month that is
+always a day off. The parser fix will not explain them. The cause is not known yet. Time zones
+and the day boundary are the first thing to check, then June.
 
 <ProblemReports ticket={4471} problem="one-day" quote />
 
